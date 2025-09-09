@@ -73,10 +73,7 @@ services:
         condition: service_healthy
       ollama:
         condition: service_healthy
-    command: >
-      sh -c "echo 'Pulling lightweight CPU model (llama3.2 3B) ...' &&
-             ollama pull llama3.2 &&
-             exec tini -s -- /docker-entrypoint.sh n8n start"
+    # no custom command – original entrypoint runs n8n
 
 volumes:
   postgres_data:
