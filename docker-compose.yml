@@ -1,6 +1,4 @@
-# docker-compose.yml  –  CPU-only, Dokploy-ready
-version: "3.9"
-
+# docker-compose.yml  –  CPU-only, Dokploy-ready  (port 5679)
 services:
   postgres:
     image: postgres:16-alpine
@@ -32,7 +30,6 @@ services:
   ollama:
     image: alpine/ollama:latest
     restart: unless-stopped
-    # CPU only – no runtime/gpu
     volumes:
       - ollama_data:/root/.ollama
     healthcheck:
@@ -45,7 +42,6 @@ services:
     image: n8nio/n8n:latest
     restart: unless-stopped
     environment:
-      # Core
       N8N_HOST: ${N8N_HOST:-localhost}
       N8N_PORT: 5678
       N8N_PROTOCOL: ${N8N_PROTOCOL:-http}
@@ -53,7 +49,6 @@ services:
       NODE_ENV: production
       WEBHOOK_URL: ${WEBHOOK_URL:-http://localhost:5678}
 
-      # DB
       DB_TYPE: postgresdb
       DB_POSTGRESDB_HOST: postgres
       DB_POSTGRESDB_PORT: 5432
@@ -61,15 +56,12 @@ services:
       DB_POSTGRESDB_USER: ${POSTGRES_USER:-n8n}
       DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD:?Please set POSTGRES_PASSWORD in Dokploy}
 
-      # Redis
       QUEUE_BULL_REDIS_HOST: redis
       QUEUE_BULL_REDIS_PORT: 6379
       QUEUE_BULL_REDIS_DB: 0
       QUEUE_BULL_REDIS_PASSWORD: ${REDIS_PASSWORD:?Please set REDIS_PASSWORD in Dokploy}
 
-      # AI – Ollama
       N8N_AI_OLLAMA_BASE_URL: http://ollama:11434
-
     volumes:
       - n8n_data:/home/node/.n8n
     ports:
@@ -81,12 +73,10 @@ services:
         condition: service_healthy
       ollama:
         condition: service_healthy
-    entrypoint: >
-      sh -c "
-        echo ‘Pulling lightweight CPU model (llama3.2 3B) …’ &&
-        ollama pull llama3.2 &&
-        exec tini -s -- /docker-entrypoint.sh n8n start
-      "
+    command: >
+      sh -c "echo 'Pulling lightweight CPU model (llama3.2 3B) ...' &&
+             ollama pull llama3.2 &&
+             exec tini -s -- /docker-entrypoint.sh n8n start"
 
 volumes:
   postgres_data:
