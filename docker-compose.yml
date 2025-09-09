@@ -30,7 +30,7 @@ services:
       retries: 5
 
   ollama:
-    image: ollama/ollama:alpine
+    image: alpine/ollama:latest
     restart: unless-stopped
     # CPU only – no runtime/gpu
     volumes:
