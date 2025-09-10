@@ -48,6 +48,9 @@ services:
       N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:?Please set N8N_ENCRYPTION_KEY in Dokploy}
       NODE_ENV: production
       WEBHOOK_URL: ${WEBHOOK_URL:-http://localhost:5678}
+            # ----------  Python sandbox ----------
+      N8N_CODE_EXECUTION_MODE: external
+      N8N_CODE_EXECUTION_PYTHON_EXECUTABLE: python3
 
       DB_TYPE: postgresdb
       DB_POSTGRESDB_HOST: postgres
